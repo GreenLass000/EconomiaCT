@@ -1,0 +1,55 @@
+# Entornos virtuales
+venv/
+.env/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Archivos de configuración
+*.env
+*.ini
+*.cfg
+
+# Archivos compilados de Python
+*.py[cod]
+*$py.class
+
+# Directorios de metadatos de Python
+__pycache__/
+*.egg-info/
+*.eggs/
+
+# Archivos de logs
+*.log
+
+# Bases de datos locales
+*.sqlite3
+
+# Archivos de distribución
+dist/
+build/
+*.egg
+*.wheel
+
+# Configuración de editores y sistemas operativos
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos creados por pruebas
+.coverage
+.tox/
+.pytest_cache/
+.cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Archivos temporales
+tmp/
+temp/
