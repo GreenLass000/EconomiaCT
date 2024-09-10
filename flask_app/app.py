@@ -7,8 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={
      r"/*": {"origins": [
          "http://localhost:3000",
-         "http://83.58.177.180:3000",
-         "http://26.43.27.30:3000"
+         "http://192.168.1.130:3000",
      ]}})
 
 # Inicializar la base de datos
