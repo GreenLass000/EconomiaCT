@@ -21,7 +21,7 @@ const NewPersonModal = ({ onSubmit }) => {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/persons', formData);
+            const response = await axios.post('http://192.168.l.130:5000/persons', formData);
             // console.log('Persona añadida:', response.data);
             onSubmit(response.data);
 

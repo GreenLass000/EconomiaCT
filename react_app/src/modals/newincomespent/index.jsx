@@ -34,7 +34,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchIncomeList = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/incomelists');
+        const response = await axios.get('http://192.168.l.130:5000/incomelists');
         setIncomeList(response.data);
       } catch (error) {
         console.error('Error fetching income list:', error);
@@ -47,7 +47,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchSpentList = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/spentlists');
+        const response = await axios.get('http://192.168.l.130:5000/spentlists');
         setSpentList(response.data);
       } catch (error) {
         console.error('Error fetching spent list:', error);
@@ -60,7 +60,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchPersonList = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/persons/active');
+        const response = await axios.get('http://192.168.l.130:5000/persons/active');
         setPersonList(response.data);
       } catch (error) {
         console.error('Error fetching person list:', error);
@@ -128,7 +128,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
     };
 
     try {
-      await axios.post('http://localhost:5000/record', formData);
+      await axios.post('http://192.168.l.130:5000/record', formData);
       onSubmit(formData);
     } catch (error) {
       console.error('Error al añadir el registro:', error);
