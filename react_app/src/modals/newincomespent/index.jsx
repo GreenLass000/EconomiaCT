@@ -15,7 +15,7 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import axios from 'axios';
-import { API_SERVER, API_PORT } from '../../config';
+import API_URL from '../../config';
 
 const NewIncomeSpentModal = ({ onSubmit }) => {
   const [selectedType, setSelectedType] = useState('gasto');
@@ -35,7 +35,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchIncomeList = async () => {
       try {
-        const response = await axios.get(`http://${API_SERVER}:${API_PORT}/incomelists`);
+        const response = await axios.get(`${API_URL}/incomelists`);
         setIncomeList(response.data);
       } catch (error) {
         console.error('Error fetching income list:', error);
@@ -48,7 +48,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchSpentList = async () => {
       try {
-        const response = await axios.get(`http://${API_SERVER}:${API_PORT}/spentlists`);
+        const response = await axios.get(`${API_URL}/spentlists`);
         setSpentList(response.data);
       } catch (error) {
         console.error('Error fetching spent list:', error);
@@ -61,7 +61,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
   useEffect(() => {
     const fetchPersonList = async () => {
       try {
-        const response = await axios.get(`http://${API_SERVER}:${API_PORT}/persons/active`);
+        const response = await axios.get(`${API_URL}/persons/active`);
         setPersonList(response.data);
       } catch (error) {
         console.error('Error fetching person list:', error);
@@ -129,7 +129,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
     };
 
     try {
-      await axios.post(`http://${API_SERVER}:${API_PORT}/record`, formData);
+      await axios.post(`${API_URL}/record`, formData);
       onSubmit(formData);
       window.location.reload();
     } catch (error) {
