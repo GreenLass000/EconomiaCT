@@ -5,7 +5,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import './newperson_styles.css';
 import axios from 'axios';
-import API_URL from '../../config';
 
 const NewPersonModal = ({ onSubmit }) => {
     const [firstName, setFirstName] = useState('');
@@ -22,7 +21,7 @@ const NewPersonModal = ({ onSubmit }) => {
         };
 
         try {
-            const response = await axios.post(`${API_URL}/persons`, formData);
+            const response = await axios.post('http://192.168.1.130:5000/persons', formData);
             // console.log('Persona añadida:', response.data);
             onSubmit(response.data);
 
