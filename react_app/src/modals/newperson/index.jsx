@@ -28,6 +28,8 @@ const NewPersonModal = ({ onSubmit }) => {
             setFirstName('');
             setLastName('');
             setIsConcertado(false);
+
+            window.location.reload();
         } catch (error) {
             console.error('Error al añadir persona:', error);
         }

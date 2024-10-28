@@ -130,6 +130,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
     try {
       await axios.post('http://192.168.1.130:5000/record', formData);
       onSubmit(formData);
+      window.location.reload();
     } catch (error) {
       console.error('Error al añadir el registro:', error);
       alert('Hubo un error al añadir el registro. Por favor, inténtelo de nuevo.');
