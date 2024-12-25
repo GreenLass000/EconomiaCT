@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Paper, Dialog, DialogTitle,
-    DialogContent, DialogActions, Button, Grid
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+    Snackbar, Alert, IconButton, Paper, Grid
 } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import axios from 'axios';
 import config from '../../config'; // Importar la configuración
 import './interactivelist_styles.css';
@@ -13,6 +14,7 @@ const InteractiveList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [persons, setPersons] = useState([]);
     const [detailData, setDetailData] = useState([]);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     const fetchPersonBalance = async (personId) => {
         try {
@@ -40,7 +42,6 @@ const InteractiveList = () => {
                 };
             }));
 
-            // Filtrar las personas que no sean "Comunidad Terapeutica"
             const filteredPersons = activePersons.filter(person =>
                 !(person.firstName.toLowerCase() === 'comunidad' && person.lastName.toLowerCase() === 'terapeutica')
             );
@@ -49,7 +50,7 @@ const InteractiveList = () => {
         } catch (error) {
             console.error('Error fetching persons list:', error);
         }
-    }, []); // No dependencies needed since fetchPersons doesn't rely on props or state
+    }, []);
 
     const handleRowClick = async (row) => {
         setSelectedRow(row);
@@ -69,12 +70,36 @@ const InteractiveList = () => {
     };
 
     const handleDeletePerson = async () => {
+        if (!selectedRow) return;
         try {
-            await axios.patch(`${config.API_URL}/person/delete/${selectedRow.id}`);
-            setPersons(persons.filter(person => person.id !== selectedRow.id));
-            handleCloseModal();
+            await axios.delete(`${config.API_URL}/person/${selectedRow.id}`);
+            setSnackbar({ open: true, message: 'Persona eliminada exitosamente.', severity: 'success' });
+            setIsModalOpen(false);
+            fetchPersons();
         } catch (error) {
+            setSnackbar({ open: true, message: 'Error al eliminar persona.', severity: 'error' });
             console.error('Error deleting person:', error);
+        }
+    };
+
+    const handleDeleteClick = async (id) => {
+        try {
+            await axios.delete(`${config.API_URL}/person/${id}`);
+            setSnackbar({ open: true, message: 'Registro eliminado exitosamente.', severity: 'success' });
+            fetchPersons();
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error al eliminar registro.', severity: 'error' });
+            console.error('Error deleting record:', error);
+        }
+    };
+
+    const handleEdit = async (row) => {
+        try {
+            // Aquí puedes añadir lógica para editar el registro, por ejemplo mostrando un formulario
+            setSnackbar({ open: true, message: 'Edición realizada correctamente.', severity: 'success' });
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error al editar registro.', severity: 'error' });
+            console.error('Error editing record:', error);
         }
     };
 
@@ -83,6 +108,8 @@ const InteractiveList = () => {
         const balanceStyle = { color: balance >= 0 ? 'green' : 'red' };
         return <span style={balanceStyle}>{formattedBalance}</span>;
     };
+
+    const closeSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
     useEffect(() => {
         fetchPersons();
@@ -95,16 +122,34 @@ const InteractiveList = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>Nombre</TableCell>
-                            <TableCell>Saldo</TableCell>
+                            <TableCell align='right'>Saldo</TableCell>
+                            <TableCell align='center'>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {persons.map((row) => (
-                            <TableRow key={row.id} hover onClick={() => handleRowClick(row)}>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>{formatBalance(row.balance)}</TableCell>
+                        {persons.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={2} align="center">
+                                    No hay datos en la tabla
+                                </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            persons.map((row) => (
+                                <TableRow key={row.id} hover onClick={() => handleRowClick(row)}>
+                                    <TableCell>{row.name}</TableCell>
+                                    <TableCell align='right'>
+                                        {formatBalance(row.balance)}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <IconButton onClick={(e) => { e.stopPropagation(); handleEdit(row); }}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={(e) => { e.stopPropagation(); handleDeleteClick(row.id); }} color="error">
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            )))}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -132,19 +177,37 @@ const InteractiveList = () => {
                             <TableRow>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Concepto</TableCell>
-                                <TableCell>Descripcion</TableCell>
-                                <TableCell>Cantidad</TableCell>
+                                <TableCell>Descripción</TableCell>
+                                <TableCell align="right">Cantidad</TableCell>
+                                <TableCell align="center">Acciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {detailData.map((row, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{new Date(row.date).toLocaleDateString()}</TableCell>
-                                    <TableCell>{row.concept}</TableCell>
-                                    <TableCell>{row.description}</TableCell>
-                                    <TableCell>{formatBalance(row.amount)}</TableCell>
+                            {detailData.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} align="center">
+                                        No hay datos en la tabla
+                                    </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : (
+                                detailData.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{new Date(row.date).toLocaleDateString()}</TableCell>
+                                        <TableCell>{row.concept}</TableCell>
+                                        <TableCell>{row.description}</TableCell>
+                                        <TableCell align="right" style={{ color: row.amount >= 0 ? 'green' : 'red' }}>
+                                            {formatBalance(row.amount)}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <IconButton onClick={() => handleEdit(row)}>
+                                                <EditIcon />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleDeleteClick(row.id)} color="error">
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                )))}
                         </TableBody>
                     </Table>
                 </DialogContent>
@@ -152,6 +215,17 @@ const InteractiveList = () => {
                     <Button onClick={handleCloseModal}>Cerrar</Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={closeSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

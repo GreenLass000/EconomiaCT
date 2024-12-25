@@ -90,7 +90,7 @@ def add_person():
 
 
 @person_bp.route('/person/delete/<int:id>', methods=['PATCH'])
-def delete_person(id):
+def disable_person(id):
     """
     Endpoint para 'eliminar' una persona cambiando isactive a false y estableciendo date_left.
 
@@ -122,3 +122,77 @@ def delete_person(id):
             'date_joined': person.date_joined,
             'date_left': person.date_left
         })
+
+@person_bp.route('/person/<int:id>', methods=['DELETE'])
+def delete_person(id):
+    """
+    Endpoint para eliminar una persona de la base de datos.
+
+    Parámetros URL:
+        - id: int
+
+    Devuelve:
+        Un diccionario JSON con los detalles de la persona eliminada o un error si no se encuentra la persona.
+    """
+    with get_session() as session:
+        person = session.query(Person).get(id)
+        if person is None:
+            return jsonify({'error': 'Person not found'}), 404
+
+        session.delete(person)
+        session.commit()
+
+        return jsonify({
+            'id': person.id,
+            'firstName': person.firstName,
+            'lastName': person.lastName,
+            'isconcertado': person.isconcertado,
+            'isactive': person.isactive,
+            'date_joined': person.date_joined,
+            'date_left': person.date
+        })
+
+# @person_bp.route('/person/<int:id>', methods=['PUT'])
+# def update_person(id):
+#     """
+#     Endpoint para editar una persona existente.
+
+#     Parámetros URL:
+#         - id: int
+
+#     Datos JSON esperados:
+#         - firstName: str (opcional)
+#         - lastName: str (opcional)
+#         - isConcertado: bool (opcional)
+#         - isActive: bool (opcional)
+
+#     Devuelve:
+#         Un diccionario JSON con los detalles de la persona actualizada o un error si no se encuentra la persona.
+#     """
+#     data = request.get_json()
+    
+#     with get_session() as session:
+#         person = session.query(Person).get(id)
+#         if person is None:
+#             return jsonify({'error': 'Person not found'}), 404
+        
+#         if 'firstName' in data:
+#             person.firstName = data['firstName']
+#         if 'lastName' in data:
+#             person.lastName = data['lastName']
+#         if 'isConcertado' in data:
+#             person.isconcertado = data['isConcertado']
+#         if 'isActive' in data:
+#             person.isactive = data['isActive']
+
+#         session.commit()
+        
+#         return jsonify({
+#             'id': person.id,
+#             'firstName': person.firstName,
+#             'lastName': person.lastName,
+#             'isconcertado': person.isconcertado,
+#             'isactive': person.isactive,
+#             'date_joined': person.date_joined,
+#             'date_left': person.date_left
+#         })

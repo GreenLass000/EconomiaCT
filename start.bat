@@ -4,6 +4,16 @@ REM Lanzar la aplicación Flask
 REM Navegar al directorio de la aplicación Flask
 cd flask_app
 
+REM Crear un entorno virtual (opcional, si es necesario)
+echo Creando entorno virtual...
+python -m venv .venv
+if %ERRORLEVEL% NEQ 0 exit /b 0
+
+REM Activar el entorno virtual
+echo Activando entorno virtual...
+call .venv\Scripts\activate
+if %ERRORLEVEL% NEQ 0 exit /b 0
+
 REM Instalar dependencias (opcional, si es necesario)
 echo Instalando dependencias de Flask...
 call pip install -r requirements.txt
