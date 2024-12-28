@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+    Dialog, DialogTitle, DialogContent, DialogActions, Button,
     Snackbar, Alert, IconButton, Paper, Grid
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import axios from 'axios';
-import config from '../../config'; // Importar la configuración
+import config from '../../config';
 import './interactivelist_styles.css';
 
 const InteractiveList = () => {
+    const [deleteRecordDialogOpen, setDeleteRecordDialogOpen] = useState(false);
+    const [deletePersonDialogOpen, setDeletePersonDialogOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const [persons, setPersons] = useState([]);
     const [detailData, setDetailData] = useState([]);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -69,37 +72,77 @@ const InteractiveList = () => {
         setDetailData([]);
     };
 
-    const handleDeletePerson = async () => {
+    const handleDisablePerson = async () => {
         if (!selectedRow) return;
         try {
-            await axios.delete(`${config.API_URL}/person/${selectedRow.id}`);
-            setSnackbar({ open: true, message: 'Persona eliminada exitosamente.', severity: 'success' });
+            await axios.patch(`${config.API_URL}/person/delete/${selectedRow.id}`);
+            setSnackbar({ open: true, message: 'Persona dada de baja exitosamente.', severity: 'success' });
             setIsModalOpen(false);
             fetchPersons();
         } catch (error) {
-            setSnackbar({ open: true, message: 'Error al eliminar persona.', severity: 'error' });
+            setSnackbar({ open: true, message: 'Error al dar de baja a persona.', severity: 'error' });
             console.error('Error deleting person:', error);
         }
     };
 
-    const handleDeleteClick = async (id) => {
+    const handleDeleteRecordClick = async (id) => {
+        setSelectedId(id);
+        setDeleteRecordDialogOpen(true);
+    };
+
+    const handleDeletePersonClick = async (id) => {
+        
+    };
+
+    const handleDeleteRecordConfirm = async () => {
         try {
-            await axios.delete(`${config.API_URL}/person/${id}`);
+            await axios.delete(`${config.API_URL}/record/${selectedId}`);
+            setDetailData(prevDetailData => prevDetailData.filter(item => item.id !== selectedId));
+            setDeleteRecordDialogOpen(false);
             setSnackbar({ open: true, message: 'Registro eliminado exitosamente.', severity: 'success' });
-            fetchPersons();
         } catch (error) {
             setSnackbar({ open: true, message: 'Error al eliminar registro.', severity: 'error' });
             console.error('Error deleting record:', error);
         }
     };
 
+    const handleDeletePersonConfirm = async () => {
+        try {
+            await axios.delete(`${config.API_URL}/person/${selectedId}`);
+            setSnackbar({ open: true, message: 'Persona eliminada exitosamente.', severity: 'success' });
+            fetchPersons();
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error al eliminar persona.', severity: 'error' });
+            console.error('Error deleting record:', error);
+        }
+    };
+
     const handleEdit = async (row) => {
         try {
-            // Aquí puedes añadir lógica para editar el registro, por ejemplo mostrando un formulario
-            setSnackbar({ open: true, message: 'Edición realizada correctamente.', severity: 'success' });
+            setSnackbar({ open: true, message: 'No implementado', severity: 'info' });
         } catch (error) {
-            setSnackbar({ open: true, message: 'Error al editar registro.', severity: 'error' });
+            setSnackbar({ open: true, message: 'Error no implementado', severity: 'error' });
             console.error('Error editing record:', error);
+        }
+    };
+
+    const personHandleEdit = async (row) => {
+        try {
+            setSnackbar({ open: true, message: 'No implementado', severity: 'info' });
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error no implementado', severity: 'error' });
+            console.error('Error editing record:', error);
+        }
+    };
+
+    const personHandleDeleteClick = async (id) => {
+        try {
+            await axios.delete(`${config.API_URL}/person/${id}`);
+            setSnackbar({ open: true, message: 'Persona eliminada exitosamente.', severity: 'success' });
+            fetchPersons();
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Error al eliminar persona.', severity: 'error' });
+            console.error('Error deleting record:', error);
         }
     };
 
@@ -129,7 +172,7 @@ const InteractiveList = () => {
                     <TableBody>
                         {persons.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={2} align="center">
+                                <TableCell colSpan={3} align="center">
                                     No hay datos en la tabla
                                 </TableCell>
                             </TableRow>
@@ -141,10 +184,10 @@ const InteractiveList = () => {
                                         {formatBalance(row.balance)}
                                     </TableCell>
                                     <TableCell align="center">
-                                        <IconButton onClick={(e) => { e.stopPropagation(); handleEdit(row); }}>
+                                        <IconButton onClick={(e) => { e.stopPropagation(); personHandleEdit(row); }}>
                                             <EditIcon />
                                         </IconButton>
-                                        <IconButton onClick={(e) => { e.stopPropagation(); handleDeleteClick(row.id); }} color="error">
+                                        <IconButton onClick={(e) => { e.stopPropagation(); personHandleDeleteClick(row.id); }} color="error">
                                             <DeleteIcon />
                                         </IconButton>
                                     </TableCell>
@@ -164,7 +207,7 @@ const InteractiveList = () => {
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={handleDeletePerson}
+                                onClick={handleDisablePerson}
                             >
                                 Dar de baja
                             </Button>
@@ -185,7 +228,7 @@ const InteractiveList = () => {
                         <TableBody>
                             {detailData.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center">
+                                    <TableCell colSpan={5} align="center">
                                         No hay datos en la tabla
                                     </TableCell>
                                 </TableRow>
@@ -202,7 +245,7 @@ const InteractiveList = () => {
                                             <IconButton onClick={() => handleEdit(row)}>
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDeleteClick(row.id)} color="error">
+                                            <IconButton onClick={() => handleDeleteRecordClick(row.id)} color="error">
                                                 <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
@@ -213,6 +256,28 @@ const InteractiveList = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseModal}>Cerrar</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={deleteRecordDialogOpen} onClose={() => setDeleteRecordDialogOpen(false)}>
+                <DialogTitle>¿Estás seguro?</DialogTitle>
+                <DialogContent>
+                    Esta acción no se puede deshacer. Se eliminará permanentemente este registro.
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteRecordDialogOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleDeleteRecordConfirm} color="error">Eliminar</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={deletePersonDialogOpen} onClose={() => setDeletePersonDialogOpen(false)}>
+                <DialogTitle>¿Estás seguro?</DialogTitle>
+                <DialogContent>
+                    Esta acción no se puede deshacer. Se eliminará permanentemente esta persona.
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeletePersonDialogOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleDeletePersonConfirm} color="error">Eliminar</Button>
                 </DialogActions>
             </Dialog>
 

@@ -37,7 +37,7 @@ const DetailTable = () => {
 
     const handleDeleteConfirm = async () => {
         try {
-            await axios.delete(`http://localhost:5000/record/${selectedId}`);
+            await axios.delete(`${config.API_URL}/record/${selectedId}`);
             setDetailData(detailData.filter(row => row.id !== selectedId));
             setDeleteDialogOpen(false);
             setNotification({ open: true, message: 'Registro eliminado correctamente' });
@@ -54,7 +54,7 @@ const DetailTable = () => {
 
     const handleEditSave = async () => {
         try {
-            await axios.put(`http://localhost:5000/record/${editingRecord.id}`, editingRecord);
+            await axios.put(`${config.API_URL}/record/${editingRecord.id}`, editingRecord);
             setDetailData(detailData.map(item => (item.id === editingRecord.id ? editingRecord : item)));
             setEditDialogOpen(false);
             setNotification({ open: true, message: 'Registro actualizado correctamente' });
@@ -177,6 +177,7 @@ const DetailTable = () => {
                 open={notification.open}
                 autoHideDuration={3000}
                 onClose={() => setNotification({ ...notification, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
                 <Alert severity="success" sx={{ width: '100%' }}>
                     {notification.message}
