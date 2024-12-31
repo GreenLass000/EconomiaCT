@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+// import Checkbox from '@mui/material/Checkbox';
+// import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import './newperson_styles.css';
 import axios from 'axios';
@@ -61,7 +61,7 @@ const NewPersonModal = ({ onSubmit }) => {
                     fullWidth
                 />
             </div>
-            <div className='form-item'>
+            {/* <div className='form-item'>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -73,7 +73,7 @@ const NewPersonModal = ({ onSubmit }) => {
                     }
                     label="Concertado"
                 />
-            </div>
+            </div> */}
             <div className='form-item'>
                 <Button type="submit" variant="contained" color="primary" fullWidth>
                     Añadir Persona

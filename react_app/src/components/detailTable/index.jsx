@@ -8,12 +8,13 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import './detailtable_styles.css';
 import config from '../../config';
+import CustomTextBox from '../CustomTextBox';
 
 const DetailTable = () => {
     const [detailData, setDetailData] = useState([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [notification, setNotification] = useState({ open: false, message: '' });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const [selectedId, setSelectedId] = useState(null);
     const [editingRecord, setEditingRecord] = useState(null);
 
@@ -40,10 +41,10 @@ const DetailTable = () => {
             await axios.delete(`${config.API_URL}/record/${selectedId}`);
             setDetailData(detailData.filter(row => row.id !== selectedId));
             setDeleteDialogOpen(false);
-            setNotification({ open: true, message: 'Registro eliminado correctamente' });
+            setSnackbar({ open: true, message: 'Registro eliminado correctamente', severity: 'success' });
         } catch (error) {
             console.error('Error deleting record:', error);
-            setNotification({ open: true, message: 'Error al eliminar el registro' });
+            setSnackbar({ open: true, message: 'Error al eliminar el registro', severity: 'error' });
         }
     };
 
@@ -57,10 +58,10 @@ const DetailTable = () => {
             await axios.put(`${config.API_URL}/record/${editingRecord.id}`, editingRecord);
             setDetailData(detailData.map(item => (item.id === editingRecord.id ? editingRecord : item)));
             setEditDialogOpen(false);
-            setNotification({ open: true, message: 'Registro actualizado correctamente' });
+            setSnackbar({ open: true, message: 'Registro actualizado correctamente', severity: 'success' });
         } catch (error) {
             console.error('Error updating record:', error);
-            setNotification({ open: true, message: 'Error al actualizar el registro' });
+            setSnackbar({ open: true, message: 'Error al actualizar el registro', severity: 'error' });
         }
     };
 
@@ -77,18 +78,28 @@ const DetailTable = () => {
 
     return (
         <div className="grid-item">
+            <CustomTextBox text="Caja Comunidad Terapeutica" />
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Fecha</TableCell>
-                            <TableCell>Concepto</TableCell>
-                            <TableCell>Descripción</TableCell>
-                            <TableCell align="right">Cantidad</TableCell>
-                            <TableCell align="center">Acciones</TableCell>
+                            <TableCell style={{ fontWeight: 'bold' }}>Fecha</TableCell>
+                            <TableCell style={{ fontWeight: 'bold' }}>Concepto</TableCell>
+                            <TableCell style={{ fontWeight: 'bold' }}>Descripción</TableCell>
+                            <TableCell style={{ fontWeight: 'bold' }} align="right">Cantidad</TableCell>
+                            <TableCell style={{ fontWeight: 'bold' }} align="center">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={3} align="left" style={{ fontWeight: 'bold' }}>
+                                Saldo:
+                            </TableCell>
+                            <TableCell align="right" style={{ fontWeight: 'bold', color: totalAmount >= 0 ? 'green' : 'red' }}>
+                                {formatAmount(totalAmount)}
+                            </TableCell>
+                            <TableCell />
+                        </TableRow>
                         {detailData.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} align="center">
@@ -114,15 +125,6 @@ const DetailTable = () => {
                                     </TableCell>
                                 </TableRow>
                             )))}
-                        <TableRow>
-                            <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
-                                Balance Total:
-                            </TableCell>
-                            <TableCell align="right" style={{ fontWeight: 'bold', color: totalAmount >= 0 ? 'green' : 'red' }}>
-                                {formatAmount(totalAmount)}
-                            </TableCell>
-                            <TableCell />
-                        </TableRow>
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -174,13 +176,13 @@ const DetailTable = () => {
             </Dialog>
 
             <Snackbar
-                open={notification.open}
+                open={snackbar.open}
                 autoHideDuration={3000}
-                onClose={() => setNotification({ ...notification, open: false })}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert severity="success" sx={{ width: '100%' }}>
-                    {notification.message}
+                <Alert severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
                 </Alert>
             </Snackbar>
         </div>

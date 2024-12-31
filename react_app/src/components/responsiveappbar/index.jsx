@@ -13,7 +13,7 @@ import NewIncomeSpentModal from '../../modals/newincomespent';
 import "./menu_styles.css";
 
 const ResponsiveAppBar = () => {
-  const pages = ['Añadir Persona', 'Nuevo Ingreso/Gasto'];
+  const pages = ['Añadir Persona', 'Nuevo Ingreso/Gasto', 'Generar Reporte'];
 
   const [selectedDialog, setSelectedDialog] = useState(null);
 
@@ -48,7 +48,7 @@ const ResponsiveAppBar = () => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Economía Comunidad Terapéutica
@@ -87,9 +87,9 @@ const ResponsiveAppBar = () => {
       </StyledDialog>
 
       <StyledDialog open={selectedDialog === 2} onClose={handleClose}>
-        <DialogTitle>Lista de gastos</DialogTitle>
+        <DialogTitle>Generar Reporte</DialogTitle>
         <DialogContent>
-          <Typography variant="body1">Lista de todos los gastos.</Typography>
+          <Typography variant="body1">Generar reporte</Typography>
         </DialogContent>
         <StyledDialogActions>
           <Button onClick={handleClose}>Cerrar</Button>
