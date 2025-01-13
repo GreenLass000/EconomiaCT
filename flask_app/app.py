@@ -8,6 +8,7 @@ CORS(app, resources={
      r"/*": {"origins": [
          "http://localhost:3000",
          "http://192.168.1.130:3000",
+         "http://192.168.1.118:3000"
      ]}})
 
 # Inicializar la base de datos

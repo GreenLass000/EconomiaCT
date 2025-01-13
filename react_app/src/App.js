@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@emotion/react';
 import './App.css';
-import DetailTable from './components/detailTable';
-import InteractiveList from './components/interactivelist';
-import ResponsiveAppBar from './components/responsiveappbar';
+import DetailTable from './components/DetailTable';
+import InteractiveList from './components/Interactivelist';
+import ResponsiveAppBar from './components/AppBar';
 import theme from './theme';
 
 function App() {

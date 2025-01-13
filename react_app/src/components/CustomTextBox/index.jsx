@@ -8,7 +8,7 @@ const CustomTextBox = ({ text }) => {
             alignItems: 'center',
             // justifyContent: 'center',
             width: '100%',
-            height: '7vh',
+            height: '50px',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
             border: '1px solid lightgray',
             // borderRadius: '10px',
