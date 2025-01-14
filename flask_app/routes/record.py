@@ -18,6 +18,7 @@ def add_record():
     amount = data.get('amount')
     description = data.get('description', '')
     isconcertado = data.get('isconcertado')
+    date = data.get('date')
 
     if not person_id or not concept or not amount:
         return jsonify({'error': 'Missing required fields'}), 400
@@ -39,7 +40,7 @@ def add_record():
             concept=concept,
             amount=amount,
             description=description,
-            date=datetime.now(timezone.utc),
+            date=date,
         )
         session.add(new_record)
         session.commit()
