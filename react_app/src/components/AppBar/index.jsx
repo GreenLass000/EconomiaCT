@@ -89,7 +89,7 @@ const ResponsiveAppBar = () => {
       <StyledDialog open={selectedDialog === 2} onClose={handleClose}>
         <DialogTitle>Generar Reporte</DialogTitle>
         <DialogContent>
-          <Typography variant="body1">Generar reporte</Typography>
+          <Typography variant="body1">No Implementado</Typography>
         </DialogContent>
         <StyledDialogActions>
           <Button onClick={handleClose}>Cerrar</Button>

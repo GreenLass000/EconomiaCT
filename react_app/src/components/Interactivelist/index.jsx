@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Dialog, DialogTitle, DialogContent, DialogActions, Button,
-    Snackbar, Alert, IconButton, Paper, Grid, TextField, FormControlLabel, Checkbox
+    Snackbar, Alert, IconButton, Paper, Grid, TextField
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, PersonRemoveAlt1, FormatListNumbered } from '@mui/icons-material';
 import axios from 'axios';
@@ -228,15 +228,6 @@ const InteractiveList = () => {
                         value={editPersonData.lastName}
                         onChange={(e) => setEditPersonData({ ...editPersonData, lastName: e.target.value })}
                         margin="normal"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={editPersonData.isConcertado}
-                                onChange={(e) => setEditPersonData({ ...editPersonData, isConcertado: e.target.checked })}
-                            />
-                        }
-                        label="Concertado"
                     />
                 </DialogContent>
                 <DialogActions>
