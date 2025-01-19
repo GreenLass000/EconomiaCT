@@ -16,6 +16,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import axios from 'axios';
 import config from '../../config';
+import { format } from 'date-fns';
 
 const NewIncomeSpentModal = ({ onSubmit }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -126,7 +127,7 @@ const NewIncomeSpentModal = ({ onSubmit }) => {
             concept: selectedType === 'ingreso' ? incomeItem : spentItem,
             amount: selectedType === 'ingreso' ? incomeAmount : -(spentAmount),
             description,
-            date: selectedDate,
+            date: format(new Date(selectedDate), 'yyyy-MM-dd HH:mm:ss'),
             isconcertado: isConcerted
         };
 
