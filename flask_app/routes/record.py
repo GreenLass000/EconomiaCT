@@ -61,7 +61,7 @@ def get_records_by_person(person_id):
     Endpoint para obtener todos los registros de una persona específica.
     """
     with get_session() as session:
-        records = session.query(Record).filter_by(person_id=person_id).all()
+        records = session.query(Record).filter_by(person_id=person_id).order_by(Record.date.desc()).all()
         return jsonify([{
             'id': record.id,
             'person_id': record.person_id,

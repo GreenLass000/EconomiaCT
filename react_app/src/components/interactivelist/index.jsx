@@ -113,14 +113,19 @@ const InteractiveList = () => {
     const handleDeleteRecordConfirm = async () => {
         try {
             await axios.delete(`${config.API_URL}/record/${selectedId}`);
-            setDetailData(prevDetailData => prevDetailData.filter(item => item.id !== selectedId));
+            const updatedDetailData = detailData.filter(item => item.id !== selectedId);
+            setDetailData(updatedDetailData);
+            const newBalance = await fetchPersonBalance(selectedRow.id);
+            setSelectedRow(prev => ({ ...prev, balance: newBalance }));
             setDeleteRecordDialogOpen(false);
+            fetchPersons();
             setSnackbar({ open: true, message: 'Registro eliminado exitosamente.', severity: 'success' });
         } catch (error) {
             setSnackbar({ open: true, message: 'Error al eliminar registro.', severity: 'error' });
             console.error('Error deleting record:', error);
         }
     };
+    
 
     // Edit record handlers
 
@@ -133,14 +138,21 @@ const InteractiveList = () => {
     const handleEditRecordSave = async () => {
         try {
             await axios.put(`${config.API_URL}/record/${selectedId}`, editRecordData);
-            setDetailData(detailData.map(item => (item.id === editRecordData.id ? editRecordData : item)));
+            const updatedDetailData = detailData.map(item =>
+                item.id === editRecordData.id ? editRecordData : item
+            );
+            setDetailData(updatedDetailData);
+            const newBalance = await fetchPersonBalance(selectedRow.id);
+            setSelectedRow(prev => ({ ...prev, balance: newBalance }));
             setEditRecordDialogOpen(false);
+            fetchPersons();
             setSnackbar({ open: true, message: 'Registro editado exitosamente.', severity: 'success' });
         } catch (error) {
             setSnackbar({ open: true, message: 'Error al editar registro.', severity: 'error' });
             console.error('Error editing record:', error);
         }
     };
+    
 
     // Edit person handlers
 
