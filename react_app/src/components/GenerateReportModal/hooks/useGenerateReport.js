@@ -9,7 +9,7 @@ export const useGenerateReport = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
 
   useEffect(() => {
-    fetch('http://localhost:3000/persons/active')
+    fetch('http://192.168.1.118:5000/persons/active')
       .then(res => res.json())
       .then(data => setPersons(data));
   }, []);
@@ -24,7 +24,7 @@ export const useGenerateReport = () => {
         start_date: startDate,
         end_date: endDate,
       });
-      const response = await fetch(`http://localhost:3000/report?${query.toString()}`);
+      const response = await fetch(`http://192.168.1.118:5000/report?${query.toString()}`);
       if (!response.ok) throw new Error('Error al generar el reporte');
 
       const blob = await response.blob();
