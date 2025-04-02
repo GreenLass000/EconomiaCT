@@ -18,7 +18,12 @@ def add_record():
     amount = data.get('amount')
     description = data.get('description', '')
     isconcertado = data.get('isconcertado')
-    date = data.get('date')
+    
+    date_str = data.get('date')
+    try:
+        date = datetime.fromisoformat(date_str)
+    except Exception:
+        return jsonify({'error': 'Invalid date format'}), 400
 
     if not person_id or not concept or not amount:
         return jsonify({'error': 'Missing required fields'}), 400

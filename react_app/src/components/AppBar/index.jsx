@@ -51,7 +51,11 @@ const ResponsiveAppBar = ({ onRefresh }) => {
                 open={selectedDialog === 0}
                 onClose={handleClose}
                 onSubmit={handleNewPersonFormSubmit}
-            />
+                onFinish={() => {
+                    onRefresh();
+                    handleClose();
+                }}
+                />
 
             <NewIncomeSpentDialog
                 open={selectedDialog === 1}

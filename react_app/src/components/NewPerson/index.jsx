@@ -1,81 +1,41 @@
 import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import './newperson_styles.css';
 import axios from 'axios';
+import PersonForm from './components/PersonForm';
+import './styles/newperson_styles.css';
 
-const NewPersonModal = ({ onSubmit }) => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [isConcertado, setIsConcertado] = useState(false);
+const NewPersonModal = ({ onSubmit, onFinish }) => {
+  const [formState, setFormState] = useState({
+    firstName: '',
+    lastName: '',
+    isConcertado: false,
+  });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleChange = (field, value) => {
+    setFormState(prev => ({ ...prev, [field]: value }));
+  };
 
-        const formData = {
-            firstName,
-            lastName,
-            isConcertado,
-        };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        try {
-            const response = await axios.post(`/persons`, formData);
-            onSubmit(response.data);
+    try {
+      const response = await axios.post(`/persons`, formState);
+      if (typeof onSubmit === 'function') onSubmit(response.data);
+    } catch (error) {
+      console.error('Error al añadir persona:', error);
+    } finally {
+      if (typeof onFinish === 'function') onFinish();
 
-            setFirstName('');
-            setLastName('');
-            setIsConcertado(false);
+      setFormState({ firstName: '', lastName: '', isConcertado: false });
+    }
+  };
 
-            window.location.reload();
-        } catch (error) {
-            console.error('Error al añadir persona:', error);
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <div className='form-item'>
-                <TextField
-                    id="firstName"
-                    name="firstName"
-                    label="Nombre"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                    fullWidth
-                />
-            </div>
-            <div className='form-item'>
-                <TextField
-                    id="lastName"
-                    name="lastName"
-                    label="Apellidos"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                    fullWidth
-                />
-            </div>
-            {/* <div className='form-item'>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            id="isConcertado"
-                            name="isConcertado"
-                            checked={isConcertado}
-                            onChange={(e) => setIsConcertado(e.target.checked)}
-                        />
-                    }
-                    label="Concertado"
-                />
-            </div> */}
-            <div className='form-item'>
-                <Button type="submit" variant="contained" color="primary" fullWidth>
-                    Añadir Persona
-                </Button>
-            </div>
-        </form>
-    );
+  return (
+    <PersonForm
+      formState={formState}
+      onChange={handleChange}
+      onSubmit={handleSubmit}
+    />
+  );
 };
 
 export default NewPersonModal;
