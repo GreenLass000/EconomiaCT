@@ -12,9 +12,9 @@ export const useFormLists = () => {
         const fetchLists = async () => {
             try {
                 const [incomeResponse, spentResponse, personResponse] = await Promise.all([
-                    axios.get(`/incomelists`),
-                    axios.get(`/spentlists`),
-                    axios.get(`/persons/active`)
+                    axios.get(`http://192.168.1.117:5000/incomelists`),
+                    axios.get(`http://192.168.1.117:5000/spentlists`),
+                    axios.get(`http://192.168.1.117:5000/persons/active`)
                 ]);
 
                 setLists({

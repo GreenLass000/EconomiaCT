@@ -25,7 +25,7 @@ export const usePersons = () => {
 
   const fetchPersonBalance = async (personId) => {
     try {
-      const response = await axios.get(`/record/person/${personId}`);
+      const response = await axios.get(`http://192.168.1.117:5000/record/person/${personId}`);
       const records = response.data;
       return records.reduce((total, r) => total + r.amount, 0);
     } catch {
@@ -35,7 +35,7 @@ export const usePersons = () => {
 
   const fetchPersons = useCallback(async () => {
     try {
-      const response = await axios.get(`/persons/active`);
+      const response = await axios.get(`http://192.168.1.117:5000/persons/active`);
       const withBalances = await Promise.all(response.data.map(async (p) => {
         const balance = await fetchPersonBalance(p.id);
         return {
@@ -59,7 +59,7 @@ export const usePersons = () => {
     setSelectedRow(row);
     setSelectedId(row.id);
     try {
-      const res = await axios.get(`/record/person/${row.id}`);
+      const res = await axios.get(`http://192.168.1.117:5000/record/person/${row.id}`);
       setDetailData(res.data);
     } catch (err) {
       console.error('Error fetching person detail:', err);
@@ -79,7 +79,7 @@ export const usePersons = () => {
 
   const handleDisablePersonConfirm = async () => {
     try {
-      await axios.patch(`/person/delete/${selectedRow.id}`);
+      await axios.patch(`http://192.168.1.117:5000/person/delete/${selectedRow.id}`);
       setSnackbar({ open: true, message: 'Persona dada de baja exitosamente.', severity: 'success' });
       setDisablePersonDialogOpen(false);
       setIsModalOpen(false);
@@ -96,7 +96,7 @@ export const usePersons = () => {
 
   const handleDeleteRecordConfirm = async () => {
     try {
-      await axios.delete(`/record/${selectedId}`);
+      await axios.delete(`http://192.168.1.117:5000/record/${selectedId}`);
       setDetailData(prev => prev.filter(item => item.id !== selectedId));
       setSnackbar({ open: true, message: 'Registro eliminado.', severity: 'success' });
       setDeleteRecordDialogOpen(false);
@@ -113,7 +113,7 @@ export const usePersons = () => {
 
   const handleEditRecordSave = async () => {
     try {
-      await axios.put(`/record/${selectedId}`, editRecordData);
+      await axios.put(`http://192.168.1.117:5000/record/${selectedId}`, editRecordData);
       setDetailData(prev => prev.map(r => r.id === editRecordData.id ? editRecordData : r));
       setSnackbar({ open: true, message: 'Registro editado.', severity: 'success' });
       setEditRecordDialogOpen(false);
@@ -132,7 +132,7 @@ export const usePersons = () => {
 
   const handleEditPersonSave = async () => {
     try {
-      await axios.put(`person/${selectedRow.id}`, editPersonData);
+      await axios.put(`http://192.168.1.117:5000/person/${selectedRow.id}`, editPersonData);
       setSnackbar({ open: true, message: 'Persona editada.', severity: 'success' });
       setEditPersonDialogOpen(false);
       setIsModalOpen(false);

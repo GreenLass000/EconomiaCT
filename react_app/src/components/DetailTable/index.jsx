@@ -22,7 +22,7 @@ const DetailTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/record/person/1`);
+        const response = await axios.get(`http://192.168.1.117:5000/record/person/1`);
         setDetailData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -38,7 +38,7 @@ const DetailTable = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`/record/${selectedId}`);
+      await axios.delete(`http://192.168.1.117:5000/record/${selectedId}`);
       setDetailData(detailData.filter(row => row.id !== selectedId));
       setSnackbar({ open: true, message: 'Registro eliminado correctamente', severity: 'success' });
     } catch (error) {
@@ -56,7 +56,7 @@ const DetailTable = () => {
 
   const handleEditSave = async () => {
     try {
-      await axios.put(`/record/${editingRecord.id}`, editingRecord);
+      await axios.put(`http://192.168.1.117:5000/record/${editingRecord.id}`, editingRecord);
       setDetailData(detailData.map(item => (item.id === editingRecord.id ? editingRecord : item)));
       setSnackbar({ open: true, message: 'Registro actualizado correctamente', severity: 'success' });
     } catch (error) {
