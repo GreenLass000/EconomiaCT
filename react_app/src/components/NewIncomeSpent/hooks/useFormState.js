@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 export const useFormState = (initialValues) => {
     const [formState, setFormState] = useState({
-        selectedDate: initialValues.date,
+        date: initialValues.date ?? new Date(),
         selectedType: initialValues.type,
         isConcerted: initialValues.isConcerted,
         description: initialValues.description,

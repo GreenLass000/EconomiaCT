@@ -14,13 +14,17 @@ import AmountInput from './components/AmountInput';
 import ConcertedCheckbox from './components/ConcertedCheckbox';
 import CustomDatePicker from './components/CustomDatePicker';
 
-const NewIncomeSpentModal = ({ onSubmit, initialValues = defaultInitialValues }) => {
+import './styles/styles.css';
+
+const NewIncomeSpentModal = ({ onSubmit, onFinish, initialValues = defaultInitialValues }) => {
     const lists = useFormLists();
     const [formState, updateFormState] = useFormState(initialValues);
     const { handleSubmit } = createFormHandlers(formState, updateFormState, lists);
 
+    const isIncome = formState.selectedType === 'ingreso';
+
     return (
-        <form onSubmit={(e) => handleSubmit(e, onSubmit)}>
+        <form onSubmit={(e) => handleSubmit(e, onSubmit, onFinish)}>
             <PersonSelector
                 value={formState.name}
                 onChange={(e) => updateFormState('name', e.target.value)}
@@ -33,18 +37,28 @@ const NewIncomeSpentModal = ({ onSubmit, initialValues = defaultInitialValues })
             <Grid container>
                 <Grid item xs={12}>
                     <ItemSelector
-                        value={formState.item}
-                        onChange={(e) => updateFormState('item', e.target.value)}
-                        items={formState.selectedType === 'ingreso' ? lists.incomeList : lists.spentList}
-                        label={formState.selectedType === 'ingreso' ? "Lista de Ingresos" : "Lista de Gastos"}
+                        value={isIncome ? formState.incomeItem : formState.spentItem}
+                        onChange={(e) =>
+                            updateFormState(
+                                isIncome ? 'incomeItem' : 'spentItem',
+                                e.target.value
+                            )
+                        }
+                        items={isIncome ? lists.incomeList : lists.spentList}
+                        label={isIncome ? 'Lista de Ingresos' : 'Lista de Gastos'}
                         required
                         fullWidth
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <AmountInput
-                        value={formState.amount}
-                        onChange={(e) => updateFormState('amount', e.target.value)}
+                        value={isIncome ? formState.incomeAmount : formState.spentAmount}
+                        onChange={(e) =>
+                            updateFormState(
+                                isIncome ? 'incomeAmount' : 'spentAmount',
+                                e.target.value
+                            )
+                        }
                         required
                         fullWidth
                     />
@@ -53,12 +67,12 @@ const NewIncomeSpentModal = ({ onSubmit, initialValues = defaultInitialValues })
                     <ConcertedCheckbox
                         checked={formState.isConcerted}
                         onChange={(e) => updateFormState('isConcerted', e.target.checked)}
-                        disabled={formState.selectedType !== 'gasto'}
+                        disabled={isIncome}
                     />
                 </Grid>
             </Grid>
             <CustomDatePicker
-                value={formState.selectedDate}
+                value={formState.date}
                 onChange={(newDate) => updateFormState('date', newDate)}
                 fullWidth
             />
@@ -68,19 +82,19 @@ const NewIncomeSpentModal = ({ onSubmit, initialValues = defaultInitialValues })
                 fullWidth
                 label="Descripción"
                 variant="outlined"
-                style={{ marginTop: 16 }}
-                value={formState.description}
+                className="form-item"
+                value={formState.description ?? ''}
                 onChange={(e) => updateFormState('description', e.target.value)}
             />
             <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                style={{ marginTop: 16 }}
+                className="form-item"
                 disabled={!isFormValid(formState)}
                 fullWidth
             >
-                Añadir {formState.selectedType === 'ingreso' ? 'Ingreso' : 'Gasto'}
+                Añadir {isIncome ? 'Ingreso' : 'Gasto'}
             </Button>
         </form>
     );

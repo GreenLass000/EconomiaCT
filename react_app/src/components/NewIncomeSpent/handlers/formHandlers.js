@@ -1,5 +1,4 @@
 import axios from 'axios';
-import config from '../../../config';
 import { isFormValid, prepareFormData } from '../utils/formUtils';
 
 export const createFormHandlers = (formState, updateFormState, lists) => {
@@ -11,9 +10,9 @@ export const createFormHandlers = (formState, updateFormState, lists) => {
         }
     };
 
-    const handleSubmit = async (e, onSubmit) => {
+    const handleSubmit = async (e, onSubmit, onFinish) => {
         e.preventDefault();
-        
+
         if (!isFormValid(formState)) {
             alert('Por favor complete todos los campos obligatorios.');
             return;
@@ -21,12 +20,12 @@ export const createFormHandlers = (formState, updateFormState, lists) => {
 
         const formData = prepareFormData(formState, lists.personList);
 
-        console.log('id:', formData.id);
-
         try {
-            await axios.post(`${config.API_URL}/record`, formData);
+            await axios.post(`/record`, formData);
             onSubmit(formData);
-            window.location.reload();
+            if (typeof onFinish === 'function') {
+                onFinish();
+            }
         } catch (error) {
             console.error('Error al añadir el registro:', error);
             alert('Hubo un error al añadir el registro. Por favor, inténtelo de nuevo.');
@@ -35,6 +34,6 @@ export const createFormHandlers = (formState, updateFormState, lists) => {
 
     return {
         handleSpentItemChange,
-        handleSubmit
+        handleSubmit,
     };
 };

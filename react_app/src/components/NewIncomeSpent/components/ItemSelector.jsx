@@ -15,10 +15,13 @@ const ItemSelector = ({
         label={label}
         variant="outlined"
         disabled={disabled}
-        value={value}
+        value={value ?? ''}
         onChange={onChange}
         required={required}
     >
+        <MenuItem value="">
+            Selecciona una opción
+        </MenuItem>
         {items.length > 0 ? (
             items.map((item) => (
                 <MenuItem key={item.id} value={item.name}>

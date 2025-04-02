@@ -1,102 +1,71 @@
 import React, { useState } from 'react';
-import { styled } from '@mui/system';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import NewPersonModal from '../NewPerson';
-import NewIncomeSpentModal from '../NewIncomeSpent';
-import "./menu_styles.css";
+import AddPersonDialog from './components/AddPersonDialog';
+import NewIncomeSpentDialog from './components/NewIncomeSpentDialog';
+import GenerateReportDialog from './components/GenerateReportDialog';
+import './menu_styles.css';
 
-const ResponsiveAppBar = () => {
-  const pages = ['Añadir Persona', 'Nuevo Ingreso/Gasto', 'Generar Reporte'];
+const ResponsiveAppBar = ({ onRefresh }) => {
+    const [selectedDialog, setSelectedDialog] = useState(null);
 
-  const [selectedDialog, setSelectedDialog] = useState(null);
+    const handleItemClick = (index) => {
+        setSelectedDialog(index);
+    };
 
-  const handleItemClick = (index) => {
-    setSelectedDialog(index);
-  };
+    const handleClose = () => {
+        setSelectedDialog(null);
+    };
 
-  const handleClose = () => {
-    setSelectedDialog(null);
-  };
+    const handleNewPersonFormSubmit = (formData) => {
+        handleClose();
+    };
 
-  const handleNewPersonFormSubmit = (formData) => {
-    // console.log('Formulario enviado:', formData);
-    handleClose();
-  };
+    const handleNewIncomeSpentFormSubmit = (formData) => {
+        // Puedes hacer algo con formData si quieres
+    };
 
-  const handleNewIncomeSpentFormSubmit = (formData) => {
-    // console.log('Formulario enviado:', formData);
-    handleClose();
-  };
+    const handleNewIncomeSpentFinish = () => {
+        if (typeof onRefresh === 'function') {
+            onRefresh();
+        }
+        handleClose();
+    };
 
-  const StyledDialog = styled(Dialog)({
-    '& .MuiDialog-paper': {
-      width: '40%',
-      maxWidth: 'none',
-    },
-  });
+    return (
+        <>
+            <AppBar position="sticky">
+                <Toolbar>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                        Economía Comunidad Terapéutica
+                    </Typography>
+                    <Button color="inherit" onClick={() => handleItemClick(0)}>Añadir Persona</Button>
+                    <Button color="inherit" onClick={() => handleItemClick(1)}>Nuevo Ingreso/Gasto</Button>
+                    <Button color="inherit" onClick={() => handleItemClick(2)}>Generar Reporte</Button>
+                </Toolbar>
+            </AppBar>
 
-  const StyledDialogActions = styled(DialogActions)({
-    justifyContent: 'flex-start',
-  });
+            <AddPersonDialog
+                open={selectedDialog === 0}
+                onClose={handleClose}
+                onSubmit={handleNewPersonFormSubmit}
+            />
 
-  return (
-    <>
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Economía Comunidad Terapéutica
-          </Typography>
-          {pages.map((item, index) => (
-            <Button
-              key={index}
-              color="inherit"
-              onClick={() => handleItemClick(index)}
-            >
-              {item}
-            </Button>
-          ))}
-        </Toolbar>
-      </AppBar>
+            <NewIncomeSpentDialog
+                open={selectedDialog === 1}
+                onClose={handleClose}
+                onSubmit={handleNewIncomeSpentFormSubmit}
+                onFinish={handleNewIncomeSpentFinish}
+            />
 
-      {/* Dialogs */}
-      <StyledDialog open={selectedDialog === 0} onClose={handleClose}>
-        <DialogTitle>Añadir Persona</DialogTitle>
-        <DialogContent>
-          <NewPersonModal onSubmit={handleNewPersonFormSubmit} />
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleClose}>Cerrar</Button>
-        </StyledDialogActions>
-      </StyledDialog>
-
-      <StyledDialog open={selectedDialog === 1} onClose={handleClose}>
-        <DialogTitle>Nuevo Ingreso/Gasto</DialogTitle>
-        <DialogContent>
-          <NewIncomeSpentModal onSubmit={handleNewIncomeSpentFormSubmit} />
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleClose}>Cerrar</Button>
-        </StyledDialogActions>
-      </StyledDialog>
-
-      <StyledDialog open={selectedDialog === 2} onClose={handleClose}>
-        <DialogTitle>Generar Reporte</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">No Implementado</Typography>
-        </DialogContent>
-        <StyledDialogActions>
-          <Button onClick={handleClose}>Cerrar</Button>
-        </StyledDialogActions>
-      </StyledDialog>
-    </>
-  );
+            <GenerateReportDialog
+                open={selectedDialog === 2}
+                onClose={handleClose}
+            />
+        </>
+    );
 };
 
 export default ResponsiveAppBar;

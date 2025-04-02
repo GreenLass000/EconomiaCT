@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
-// import Checkbox from '@mui/material/Checkbox';
-// import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import './newperson_styles.css';
 import axios from 'axios';
-import config from '../../config';
 
 const NewPersonModal = ({ onSubmit }) => {
     const [firstName, setFirstName] = useState('');
@@ -22,8 +19,7 @@ const NewPersonModal = ({ onSubmit }) => {
         };
 
         try {
-            const response = await axios.post(`${config.API_URL}/persons`, formData);
-            // console.log('Persona añadida:', response.data);
+            const response = await axios.post(`/persons`, formData);
             onSubmit(response.data);
 
             setFirstName('');
@@ -35,7 +31,6 @@ const NewPersonModal = ({ onSubmit }) => {
             console.error('Error al añadir persona:', error);
         }
     };
-
 
     return (
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>

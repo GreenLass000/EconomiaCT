@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import config from '../../../config';
 
 export const useFormLists = () => {
     const [lists, setLists] = useState({
@@ -13,9 +12,9 @@ export const useFormLists = () => {
         const fetchLists = async () => {
             try {
                 const [incomeResponse, spentResponse, personResponse] = await Promise.all([
-                    axios.get(`${config.API_URL}/incomelists`),
-                    axios.get(`${config.API_URL}/spentlists`),
-                    axios.get(`${config.API_URL}/persons/active`)
+                    axios.get(`/incomelists`),
+                    axios.get(`/spentlists`),
+                    axios.get(`/persons/active`)
                 ]);
 
                 setLists({
