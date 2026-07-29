@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../../api';
 import PersonForm from './components/PersonForm';
 import './styles/newperson_styles.css';
 
@@ -18,7 +18,7 @@ const NewPersonModal = ({ onSubmit, onFinish }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`http://192.168.1.118:5000/persons`, formState);
+      const response = await axios.post('/persons', formState);
       if (typeof onSubmit === 'function') onSubmit(response.data);
     } catch (error) {
       console.error('Error al añadir persona:', error);

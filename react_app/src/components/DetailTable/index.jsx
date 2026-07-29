@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../../api';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from '@mui/material';
@@ -38,7 +38,7 @@ const DetailTable = ({ refreshKey, selectedYear }) => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`http://192.168.1.118:5000/record/${selectedId}`);
+      await axios.delete(`/record/${selectedId}`);
       setDetailData(detailData.filter(row => row.id !== selectedId));
       setSnackbar({ open: true, message: 'Registro eliminado correctamente', severity: 'success' });
     } catch (error) {
@@ -56,7 +56,7 @@ const DetailTable = ({ refreshKey, selectedYear }) => {
 
   const handleEditSave = async () => {
     try {
-      await axios.put(`http://192.168.1.118:5000/record/${editingRecord.id}`, editingRecord);
+      await axios.put(`/record/${editingRecord.id}`, editingRecord);
       setDetailData(detailData.map(item => (item.id === editingRecord.id ? editingRecord : item)));
       setSnackbar({ open: true, message: 'Registro actualizado correctamente', severity: 'success' });
     } catch (error) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import api from '../../../api';
 
 export const useGenerateReport = () => {
   const [persons, setPersons] = useState([]);
@@ -9,9 +10,8 @@ export const useGenerateReport = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'error' });
 
   useEffect(() => {
-    fetch('http://192.168.1.118:5000/persons/active')
-      .then(res => res.json())
-      .then(data => setPersons(data));
+    api.get('/persons/active')
+      .then(response => setPersons(response.data));
   }, []);
 
   const handleSubmit = async () => {
@@ -24,10 +24,8 @@ export const useGenerateReport = () => {
         start_date: startDate,
         end_date: endDate,
       });
-      const response = await fetch(`http://192.168.1.118:5000/report?${query.toString()}`);
-      if (!response.ok) throw new Error('Error al generar el reporte');
-
-      const blob = await response.blob();
+      const response = await api.get(`/report?${query.toString()}`, { responseType: 'blob' });
+      const blob = response.data;
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement('a');

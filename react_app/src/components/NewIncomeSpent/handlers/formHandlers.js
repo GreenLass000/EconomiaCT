@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../../api';
 import { isFormValid, prepareFormData } from '../utils/formUtils';
 
 export const createFormHandlers = (formState, updateFormState, lists) => {
@@ -21,7 +21,7 @@ export const createFormHandlers = (formState, updateFormState, lists) => {
         const formData = prepareFormData(formState, lists.personList);
 
         try {
-            await axios.post(`http://192.168.1.118:5000/record`, formData);
+            await axios.post('/record', formData);
             onSubmit(formData);
             if (typeof onFinish === 'function') {
                 onFinish();
