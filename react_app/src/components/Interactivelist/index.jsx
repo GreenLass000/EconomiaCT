@@ -9,7 +9,7 @@ import ConfirmDialog from './components/ConfirmDialog';
 import SnackbarAlert from './components/SnackbarAlert';
 import { usePersons } from './hooks/usePersons';
 
-const InteractiveList = ({ refreshKey }) => {
+const InteractiveList = ({ refreshKey, selectedYear }) => {
   const {
     persons,
     detailData,
@@ -24,16 +24,18 @@ const InteractiveList = ({ refreshKey }) => {
     handlers,
     closeSnackbar,
     formatAmount,
-    fetchPersons
+    fetchPersons,
+    setSelectedYear
   } = usePersons();
 
   useEffect(() => {
-    fetchPersons();
-  }, [refreshKey, fetchPersons]);
+    setSelectedYear(selectedYear);
+    fetchPersons(selectedYear);
+  }, [refreshKey, selectedYear, fetchPersons, setSelectedYear]);
 
   return (
     <div className="grid-item">
-      <CustomTextBox text="Gastos Personales Usuarios" />
+      <CustomTextBox text={`Gastos Personales Usuarios · ${selectedYear}`} />
 
       <PersonTable
         persons={persons}

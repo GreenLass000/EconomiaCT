@@ -7,7 +7,8 @@ Flask==3.0.3
 Flask-Cors==4.0.1
 Flask-SocketIO==5.3.6
 Flask-SQLAlchemy==3.1.1
-greenlet==3.0.3
+# 3.0.3 no compila con Python 3.13; este rango mantiene compatibilidad con 3.12 y 3.13.
+greenlet>=3.1.1,<4
 h11==0.14.0
 itsdangerous==2.2.0
 Jinja2==3.1.4
@@ -19,7 +20,8 @@ python-engineio==4.9.1
 python-socketio==5.11.2
 reportlab==4.3.1
 simple-websocket==1.0.0
-SQLAlchemy==2.0.30
+# Las versiones 2.0 antiguas no son compatibles con Python 3.13.
+SQLAlchemy>=2.0.41,<2.1
 typing_extensions==4.12.0
 waitress==3.0.0
 Werkzeug==3.0.3

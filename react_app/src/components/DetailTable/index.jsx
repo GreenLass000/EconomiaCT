@@ -11,7 +11,7 @@ import FeedbackSnackbar from './components/FeedbackSnackbar';
 import TableBodyContent from './components/TableBodyContent';
 import { GridItem } from './styles';
 
-const DetailTable = () => {
+const DetailTable = ({ refreshKey, selectedYear }) => {
   const [detailData, setDetailData] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -22,14 +22,14 @@ const DetailTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.118:5000/record/person/1`);
+        const response = await axios.get('/record/person/1', { params: { year: selectedYear } });
         setDetailData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, []);
+  }, [refreshKey, selectedYear]);
 
   const handleDeleteClick = (id) => {
     setSelectedId(id);
@@ -77,7 +77,7 @@ const DetailTable = () => {
 
   return (
     <GridItem>
-      <CustomTextBox text="Caja Comunidad Terapeutica" />
+      <CustomTextBox text={`Caja Comunidad Terapéutica · ${selectedYear}`} />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

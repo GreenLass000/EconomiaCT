@@ -6,6 +6,7 @@ export const usePersons = () => {
   const [detailData, setDetailData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editPersonDialogOpen, setEditPersonDialogOpen] = useState(false);
@@ -23,9 +24,9 @@ export const usePersons = () => {
 
   const closeSnackbar = () => setSnackbar(prev => ({ ...prev, open: false }));
 
-  const fetchPersonBalance = async (personId) => {
+  const fetchPersonBalance = async (personId, year) => {
     try {
-      const response = await axios.get(`http://192.168.1.118:5000/record/person/${personId}`);
+      const response = await axios.get(`/record/person/${personId}`, { params: { year } });
       const records = response.data;
       return records.reduce((total, r) => total + r.amount, 0);
     } catch {
@@ -33,11 +34,11 @@ export const usePersons = () => {
     }
   };
 
-  const fetchPersons = useCallback(async () => {
+  const fetchPersons = useCallback(async (year) => {
     try {
-      const response = await axios.get(`http://192.168.1.118:5000/persons/active`);
+      const response = await axios.get('/persons/active');
       const withBalances = await Promise.all(response.data.map(async (p) => {
-        const balance = await fetchPersonBalance(p.id);
+        const balance = await fetchPersonBalance(p.id, year);
         return {
           ...p,
           name: `${p.lastName}, ${p.firstName}`,
@@ -59,7 +60,7 @@ export const usePersons = () => {
     setSelectedRow(row);
     setSelectedId(row.id);
     try {
-      const res = await axios.get(`http://192.168.1.118:5000/record/person/${row.id}`);
+      const res = await axios.get(`/record/person/${row.id}`, { params: { year: selectedYear } });
       setDetailData(res.data);
     } catch (err) {
       console.error('Error fetching person detail:', err);
@@ -83,7 +84,7 @@ export const usePersons = () => {
       setSnackbar({ open: true, message: 'Persona dada de baja exitosamente.', severity: 'success' });
       setDisablePersonDialogOpen(false);
       setIsModalOpen(false);
-      fetchPersons();
+      fetchPersons(selectedYear);
     } catch (err) {
       setSnackbar({ open: true, message: 'Error al dar de baja.', severity: 'error' });
     }
@@ -136,7 +137,7 @@ export const usePersons = () => {
       setSnackbar({ open: true, message: 'Persona editada.', severity: 'success' });
       setEditPersonDialogOpen(false);
       setIsModalOpen(false);
-      fetchPersons();
+      fetchPersons(selectedYear);
     } catch {
       setSnackbar({ open: true, message: 'Error al editar persona.', severity: 'error' });
     }
@@ -161,6 +162,7 @@ export const usePersons = () => {
     closeSnackbar,
     formatAmount,
     fetchPersons,
+    setSelectedYear,
     handlers: {
       handleRowClick,
       handleCloseModal,

@@ -1,10 +1,21 @@
-from datetime import timezone
 from flask import Blueprint, jsonify, request
 from models import Record, Person
 from datetime import datetime
 from utils import get_session
 
 record_bp = Blueprint('record', __name__)
+
+
+def get_year_range(year_value):
+    """Valida un año y devuelve sus límites [1 de enero, 1 de enero siguiente)."""
+    try:
+        year = int(year_value)
+        if year < 1900 or year > 9998:
+            raise ValueError
+    except (TypeError, ValueError):
+        return None
+
+    return datetime(year, 1, 1), datetime(year + 1, 1, 1)
 
 
 @record_bp.route('/record', methods=['POST'])
@@ -65,8 +76,17 @@ def get_records_by_person(person_id):
     """
     Endpoint para obtener todos los registros de una persona específica.
     """
+    year = request.args.get('year')
+    year_range = get_year_range(year) if year is not None else None
+    if year is not None and year_range is None:
+        return jsonify({'error': 'Invalid year'}), 400
+
     with get_session() as session:
-        records = session.query(Record).filter_by(person_id=person_id).order_by(Record.date.desc()).all()
+        query = session.query(Record).filter_by(person_id=person_id)
+        if year_range:
+            start_date, end_date = year_range
+            query = query.filter(Record.date >= start_date, Record.date < end_date)
+        records = query.order_by(Record.date.desc()).all()
         return jsonify([{
             'id': record.id,
             'person_id': record.person_id,
@@ -75,6 +95,15 @@ def get_records_by_person(person_id):
             'description': record.description,
             'date': record.date
         } for record in records])
+
+
+@record_bp.route('/record/years', methods=['GET'])
+def get_record_years():
+    """Devuelve los años que contienen al menos un movimiento, de más reciente a más antiguo."""
+    with get_session() as session:
+        dates = session.query(Record.date).distinct().all()
+        years = sorted({record_date.year for (record_date,) in dates if record_date}, reverse=True)
+        return jsonify(years)
 
 
 @record_bp.route('/record/<int:record_id>', methods=['PUT'])

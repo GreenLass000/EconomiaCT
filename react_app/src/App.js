@@ -9,6 +9,8 @@ import ResponsiveAppBar from './components/AppBar';
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
 
   const refetchData = () => {
     setRefreshKey(prev => prev + 1);
@@ -17,10 +19,15 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-        <ResponsiveAppBar onRefresh={refetchData} />
+        <ResponsiveAppBar
+          onRefresh={refetchData}
+          currentYear={currentYear}
+          selectedYear={selectedYear}
+          onYearSelect={setSelectedYear}
+        />
         <div className="container">
-          <InteractiveList refreshKey={refreshKey} />
-          <DetailTable key={refreshKey} />
+          <InteractiveList refreshKey={refreshKey} selectedYear={selectedYear} />
+          <DetailTable refreshKey={refreshKey} selectedYear={selectedYear} />
         </div>
       </div>
     </ThemeProvider>
