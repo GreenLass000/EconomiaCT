@@ -10,7 +10,7 @@ const GenerateReportModal = () => {
     persons, selectedPerson, startDate, endDate,
     loading, snackbar,
     setSelectedPerson, setStartDate, setEndDate,
-    handleSubmit, closeSnackbar
+    handlePdfSubmit, handleExcelSubmit, closeSnackbar
   } = useGenerateReport();
 
   return (
@@ -29,13 +29,24 @@ const GenerateReportModal = () => {
           onEndChange={setEndDate}
         />
 
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={loading || !selectedPerson}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Generar PDF'}
-        </Button>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Button
+            variant="contained"
+            onClick={handlePdfSubmit}
+            disabled={loading || !selectedPerson}
+            fullWidth
+          >
+            {loading ? <CircularProgress size={24} /> : 'Generar PDF'}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleExcelSubmit}
+            disabled={loading}
+            fullWidth
+          >
+            {loading ? <CircularProgress size={24} /> : 'Generar Excel'}
+          </Button>
+        </Stack>
       </Stack>
 
       <SnackbarAlert
