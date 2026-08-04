@@ -5,6 +5,13 @@ import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 const TableBodyContent = ({ data, onEdit, onDelete }) => {
   const formatAmount = (amount) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(amount);
   const totalAmount = data.reduce((total, row) => total + row.amount, 0);
+  const runningTotals = new Map();
+  let accumulatedAmount = 0;
+
+  [...data].reverse().forEach((row) => {
+    accumulatedAmount += row.amount;
+    runningTotals.set(row.id, accumulatedAmount);
+  });
 
   return (
     <>
@@ -16,10 +23,11 @@ const TableBodyContent = ({ data, onEdit, onDelete }) => {
           {formatAmount(totalAmount)}
         </TableCell>
         <TableCell />
+        <TableCell />
       </TableRow>
       {data.length === 0 ? (
         <TableRow>
-          <TableCell colSpan={5} align="center">
+          <TableCell colSpan={6} align="center">
             No hay datos en la tabla
           </TableCell>
         </TableRow>
@@ -31,6 +39,9 @@ const TableBodyContent = ({ data, onEdit, onDelete }) => {
             <TableCell>{row.description}</TableCell>
             <TableCell align="right" style={{ color: row.amount >= 0 ? 'green' : 'red' }}>
               {formatAmount(row.amount)}
+            </TableCell>
+            <TableCell align="right" style={{ color: runningTotals.get(row.id) >= 0 ? 'green' : 'red' }}>
+              {formatAmount(runningTotals.get(row.id))}
             </TableCell>
             <TableCell align="center">
               <IconButton onClick={() => onEdit(row)}>

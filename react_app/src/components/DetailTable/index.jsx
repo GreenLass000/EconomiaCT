@@ -86,6 +86,7 @@ const DetailTable = ({ refreshKey, selectedYear }) => {
               <TableCell style={{ fontWeight: 'bold' }}>Concepto</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Descripción</TableCell>
               <TableCell style={{ fontWeight: 'bold' }} align="right">Cantidad</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }} align="right">Total acumulado</TableCell>
               <TableCell style={{ fontWeight: 'bold' }} align="center">Acciones</TableCell>
             </TableRow>
           </TableHead>
