@@ -1,66 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Lanzar la aplicación Flask
+set -Eeuo pipefail
 
-# Navegar al directorio de la aplicación Flask
-cd flask_app || exit
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_DIR="$ROOT_DIR/flask_app"
+FRONTEND_DIR="$ROOT_DIR/react_app"
 
-# Crear un entorno virtual (opcional, si es necesario)
-echo "Creando entorno virtual..."
-python3 -m venv .venv
-if [ $? -ne 0 ]; then
-    exit 0
+if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/.nvm/nvm.sh"
+  nvm use --silent "$(tr -d '\r\n' < "$FRONTEND_DIR/.nvmrc")"
 fi
 
-# Activar el entorno virtual
-echo "Activando entorno virtual..."
+command -v python3 >/dev/null || { echo "No se encontró python3." >&2; exit 1; }
+command -v node >/dev/null || { echo "No se encontró Node.js." >&2; exit 1; }
+command -v npm >/dev/null || { echo "No se encontró npm." >&2; exit 1; }
+node -e 'if (Number(process.versions.node.split(".")[0]) !== 24) process.exit(1)' || {
+  echo "EconomiaCT necesita Node.js 24 LTS. Activa la versión indicada en react_app/.nvmrc." >&2
+  exit 1
+}
+
+echo "Preparando backend Flask..."
+cd "$BACKEND_DIR"
+if [[ ! -x .venv/bin/python ]]; then
+  python3 -m venv .venv
+fi
 source .venv/bin/activate
-if [ $? -ne 0 ]; then
-    exit 0
-fi
+python -m pip install -r requirements.txt
 
-# Instalar dependencias (opcional, si es necesario)
-echo "Instalando dependencias de Flask..."
-pip install -r requirements.txt
-if [ $? -ne 0 ]; then
-    exit 0
-fi
+echo "Iniciando Flask en http://localhost:5000"
+gnome-terminal -- bash -c "cd '$BACKEND_DIR' && source .venv/bin/activate && python index.py; exec bash"
 
-# Lanzar la aplicación Flask
-echo "Iniciando la aplicación Flask..."
-gnome-terminal -- bash -c "python3 index.py; exec bash"
-
-# Esperar unos segundos para asegurarnos de que la aplicación Flask está corriendo
-sleep 5
-
-# Navegar al directorio de la aplicación React
-cd ../react_app || exit
-
-# Instalar dependencias de React (opcional, si es necesario)
-echo "Instalando dependencias de React..."
-npm install
-if [ $? -ne 0 ]; then
-    exit 0
-fi
-
-# Instalar serve globalmente siempre
-echo "Instalando o actualizando serve globalmente..."
-npm install -g serve
-if [ $? -ne 0 ]; then
-    echo "Fallo al instalar serve. Verifica permisos y conexión a internet."
-    exit 0
-fi
-
-# Construir la aplicación React
-echo "Construyendo la aplicación React..."
+echo "Preparando frontend Vite..."
+cd "$FRONTEND_DIR"
+npm ci
 npm run build
-if [ $? -ne 0 ]; then
-    exit 0
-fi
 
-# Lanzar la aplicación React usando serve
-echo "Iniciando la aplicación React..."
-gnome-terminal -- bash -c "serve -s build; exec bash"
-
-# Pausar para mantener la terminal abierta (opcional)
-read -p "Presiona cualquier tecla para continuar..."
+echo "Sirviendo frontend Vite en http://localhost:3030"
+gnome-terminal -- bash -c "cd '$FRONTEND_DIR' && npm run preview; exec bash"
