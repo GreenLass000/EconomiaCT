@@ -19,7 +19,7 @@ gestiona la instalación por proyecto con un gestor de versiones.
 Ejecuta `start.bat`. El script instala las dependencias, construye el frontend
 y abre Flask y la previsualización de Vite en ventanas separadas:
 
-- Frontend: <http://localhost:3030>
+- Frontend: <http://localhost:3000>
 - API: <http://localhost:5000>
 
 ## Desarrollo del frontend

@@ -36,5 +36,5 @@ cd "$FRONTEND_DIR"
 npm ci
 npm run build
 
-echo "Sirviendo frontend Vite en http://localhost:3030"
+echo "Sirviendo frontend Vite en http://localhost:3000"
 gnome-terminal -- bash -c "cd '$FRONTEND_DIR' && npm run preview; exec bash"
